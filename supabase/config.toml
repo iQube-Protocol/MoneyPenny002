@@ -1,1 +1,16 @@
 project_id = "bsjhfvctmduxhohtllly"
+
+[functions.ai-trade-advisor]
+verify_jwt = false
+
+[functions.arbitrage-scanner]
+verify_jwt = false
+
+[functions.banking-document-parser]
+verify_jwt = false
+
+[functions.execution-engine]
+verify_jwt = false
+
+[functions.moneypenny-chat]
+verify_jwt = false

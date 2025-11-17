@@ -2,10 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Sparkles, TrendingUp, Shield, Zap } from "lucide-react";
 import { WalletDrawer } from "@/components/WalletDrawer";
-
 export default function Index() {
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b border-border glass-card">
         <div className="container mx-auto px-6 py-4">
@@ -19,7 +17,7 @@ export default function Index() {
                 <Button variant="outline" size="sm">Console</Button>
               </Link>
               <Link to="/profile">
-                <Button variant="ghost" size="sm">Profile</Button>
+                
               </Link>
               <WalletDrawer />
             </div>
@@ -93,14 +91,32 @@ export default function Index() {
             <div className="h-12 w-12 rounded-lg bg-warning/10 flex items-center justify-center mb-4">
               <Sparkles className="h-6 w-6 text-warning" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">MetaVatar</h3>
+            <h3 className="text-lg font-semibold mb-2">MetaVatar AI</h3>
             <p className="text-sm text-muted-foreground">
-              Multi-persona management with cohort privacy. Configure your on-chain identity 
-              and trading behaviors.
+              Friendly AI guide powered by MoneyPenny. Demystifies HFT, explains risk controls, 
+              and provides market context.
             </p>
           </div>
         </div>
       </section>
-    </div>
-  );
+
+      {/* Supported Chains */}
+      <section className="px-6 pb-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl font-bold mb-8">Supported Chains</h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["Bitcoin", "Ethereum", "Solana", "Arbitrum", "Base", "Optimism", "Polygon"].map(chain => <div key={chain} className="glass-card px-6 py-3 glass-hover">
+                <span className="font-medium">{chain}</span>
+              </div>)}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border glass-card py-6">
+        <div className="max-w-6xl mx-auto px-6 text-center text-sm text-muted-foreground">
+          <p>Aigent MoneyPenny © 2025 • Privacy-first trading with Smart Buckets & Memories</p>
+        </div>
+      </footer>
+    </div>;
 }
