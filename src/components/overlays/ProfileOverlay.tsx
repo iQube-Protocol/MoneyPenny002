@@ -74,7 +74,7 @@ export function ProfileOverlay() {
         .from('financial_aggregates')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching aggregates:', error);
@@ -96,7 +96,7 @@ export function ProfileOverlay() {
         .from('trading_recommendations')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching recommendations:', error);
