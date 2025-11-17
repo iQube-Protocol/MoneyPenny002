@@ -131,6 +131,42 @@ export type Database = {
           },
         ]
       }
+      bank_statements: {
+        Row: {
+          closing_balance: number | null
+          created_at: string
+          file_name: string
+          file_path: string
+          id: string
+          parsed_at: string
+          period_end: string | null
+          period_start: string | null
+          user_id: string
+        }
+        Insert: {
+          closing_balance?: number | null
+          created_at?: string
+          file_name: string
+          file_path: string
+          id?: string
+          parsed_at?: string
+          period_end?: string | null
+          period_start?: string | null
+          user_id: string
+        }
+        Update: {
+          closing_balance?: number | null
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          parsed_at?: string
+          period_end?: string | null
+          period_start?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       claims: {
         Row: {
           amount_qcent: number
@@ -457,6 +493,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      financial_aggregates: {
+        Row: {
+          avg_daily_surplus: number | null
+          cash_buffer_days: number | null
+          closing_balance: number | null
+          computed_at: string
+          confidence_score: number | null
+          created_at: string
+          id: string
+          surplus_volatility: number | null
+          top_categories: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avg_daily_surplus?: number | null
+          cash_buffer_days?: number | null
+          closing_balance?: number | null
+          computed_at?: string
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          surplus_volatility?: number | null
+          top_categories?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avg_daily_surplus?: number | null
+          cash_buffer_days?: number | null
+          closing_balance?: number | null
+          computed_at?: string
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          surplus_volatility?: number | null
+          top_categories?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       fio_cache: {
         Row: {
@@ -1007,6 +1085,56 @@ export type Database = {
         }
         Relationships: []
       }
+      recommendation_history: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          daily_loss_limit_bps: number | null
+          id: string
+          inventory_max: number | null
+          inventory_min: number | null
+          max_notional_usd: number | null
+          min_edge_bps: number | null
+          reasoning: string | null
+          recommendation_id: string | null
+          user_id: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          daily_loss_limit_bps?: number | null
+          id?: string
+          inventory_max?: number | null
+          inventory_min?: number | null
+          max_notional_usd?: number | null
+          min_edge_bps?: number | null
+          reasoning?: string | null
+          recommendation_id?: string | null
+          user_id: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          daily_loss_limit_bps?: number | null
+          id?: string
+          inventory_max?: number | null
+          inventory_min?: number | null
+          max_notional_usd?: number | null
+          min_edge_bps?: number | null
+          reasoning?: string | null
+          recommendation_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendation_history_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "trading_recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reputation_bucket: {
         Row: {
           bucket_level: number | null
@@ -1348,6 +1476,45 @@ export type Database = {
           status?: string | null
           tenant_id?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      trading_recommendations: {
+        Row: {
+          created_at: string
+          daily_loss_limit_bps: number | null
+          id: string
+          inventory_max: number | null
+          inventory_min: number | null
+          max_notional_usd: number | null
+          min_edge_bps: number | null
+          reasoning: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_loss_limit_bps?: number | null
+          id?: string
+          inventory_max?: number | null
+          inventory_min?: number | null
+          max_notional_usd?: number | null
+          min_edge_bps?: number | null
+          reasoning?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_loss_limit_bps?: number | null
+          id?: string
+          inventory_max?: number | null
+          inventory_min?: number | null
+          max_notional_usd?: number | null
+          min_edge_bps?: number | null
+          reasoning?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
