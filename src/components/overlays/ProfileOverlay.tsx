@@ -20,12 +20,16 @@ interface BankingDocument {
   month: string;
   size: string;
   uploaded: string;
+  file_path?: string;
 }
 
 export function ProfileOverlay() {
   const [documents, setDocuments] = useState<BankingDocument[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [processingCount, setProcessingCount] = useState(0);
+  const [processedCount, setProcessedCount] = useState(0);
+  const [analyzingFiles, setAnalyzingFiles] = useState<string[]>([]);
   const { toast } = useToast();
   const moneyPenny = useMoneyPenny();
   const overlayManager = useOverlayManager();
@@ -51,8 +55,9 @@ export function ProfileOverlay() {
         id: doc.id,
         name: doc.file_name,
         month: doc.period_start || 'Unknown',
-        size: '0 KB', // We don't store size anymore
-        uploaded: new Date(doc.created_at).toLocaleDateString()
+        size: '0 KB',
+        uploaded: new Date(doc.created_at).toLocaleDateString(),
+        file_path: doc.file_path
       })) || [];
     }
   });
@@ -130,6 +135,8 @@ export function ProfileOverlay() {
     if (!files || files.length === 0) return;
     
     setIsUploading(true);
+    setProcessingCount(files.length);
+    setProcessedCount(0);
     
     try {
       // Get current user
@@ -145,8 +152,9 @@ export function ProfileOverlay() {
       }
 
       const uploadedPaths: string[] = [];
-      const uploadedDocs: BankingDocument[] = [];
       const extractedTexts: Array<{ file_path: string; text: string; name: string }> = [];
+      const fileNames = Array.from(files).map(f => f.name);
+      setAnalyzingFiles(fileNames);
       
       // Upload each file to Supabase Storage and extract text
       for (const file of Array.from(files)) {
@@ -163,28 +171,16 @@ export function ProfileOverlay() {
         }
         
         uploadedPaths.push(filePath);
-        
-        uploadedDocs.push({
-          id: filePath,
-          name: file.name,
-          month: new Date().toISOString().slice(0, 7),
-          size: `${(file.size / 1024).toFixed(1)} KB`,
-          uploaded: new Date().toISOString(),
-        });
 
         // Extract text from PDF
         try {
-          toast({
-            title: "Extracting text",
-            description: `Reading ${file.name}...`,
-          });
-          
           const { text } = await extractPDFText(file);
           extractedTexts.push({
             file_path: filePath,
             text,
             name: file.name,
           });
+          setProcessedCount(prev => prev + 1);
         } catch (extractError) {
           console.error('PDF extraction error:', extractError);
           toast({
@@ -194,8 +190,6 @@ export function ProfileOverlay() {
           });
         }
       }
-      
-      setDocuments(prev => [...prev, ...uploadedDocs]);
 
       if (extractedTexts.length === 0) {
         toast({
@@ -315,24 +309,24 @@ export function ProfileOverlay() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      // Delete all banking documents from storage
+      // Delete all banking documents from storage (correct bucket name)
       const { data: files } = await supabase.storage
-        .from('bank-statements')
+        .from('banking-documents')
         .list(user.id);
 
       if (files && files.length > 0) {
         const filePaths = files.map(file => `${user.id}/${file.name}`);
         await supabase.storage
-          .from('bank-statements')
+          .from('banking-documents')
           .remove(filePaths);
       }
 
-      // Stub: Tables don't exist yet
-      // await Promise.all([
-      //   supabase.from('bank_statements').delete().eq('user_id', user.id),
-      //   supabase.from('financial_aggregates').delete().eq('user_id', user.id),
-      //   supabase.from('trading_recommendations').delete().eq('user_id', user.id)
-      // ]);
+      // Delete all database records for this user
+      await Promise.all([
+        supabase.from('bank_statements').delete().eq('user_id', user.id),
+        supabase.from('financial_aggregates').delete().eq('user_id', user.id),
+        supabase.from('trading_recommendations').delete().eq('user_id', user.id)
+      ]);
 
       // Clear local state
       setDocuments([]);

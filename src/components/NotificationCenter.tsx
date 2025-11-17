@@ -164,17 +164,17 @@ export const NotificationCenter = () => {
         const latestExecution = executions[0];
         
         // Check if this is a new execution
-        if (lastExecutionCheckRef.current !== latestExecution.execution_id) {
-          lastExecutionCheckRef.current = latestExecution.execution_id;
+        if (lastExecutionCheckRef.current !== latestExecution.id) {
+          lastExecutionCheckRef.current = latestExecution.id;
           
           // Don't notify on first load
           if (notifications.length > 0 || lastExecutionCheckRef.current) {
             const notification: Notification = {
-              id: `exec-${latestExecution.execution_id}`,
+              id: `exec-${latestExecution.id}`,
               type: 'execution',
               title: 'Trade Executed',
               message: `${latestExecution.side} ${latestExecution.qty_filled.toFixed(4)} on ${latestExecution.chain.toUpperCase()}`,
-              severity: latestExecution.status === 'confirmed' ? 'success' : 'info',
+              severity: 'success',
               timestamp: new Date(latestExecution.timestamp),
               read: false,
               data: latestExecution,
