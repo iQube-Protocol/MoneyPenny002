@@ -494,6 +494,56 @@ export type Database = {
           },
         ]
       }
+      executions: {
+        Row: {
+          avg_price: number
+          capture_bps: number | null
+          chain: string
+          execution_venue: string | null
+          id: string
+          intent_id: string | null
+          metadata: Json | null
+          qty_filled: number
+          side: string
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          avg_price: number
+          capture_bps?: number | null
+          chain: string
+          execution_venue?: string | null
+          id?: string
+          intent_id?: string | null
+          metadata?: Json | null
+          qty_filled: number
+          side: string
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          avg_price?: number
+          capture_bps?: number | null
+          chain?: string
+          execution_venue?: string | null
+          id?: string
+          intent_id?: string | null
+          metadata?: Json | null
+          qty_filled?: number
+          side?: string
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executions_intent_id_fkey"
+            columns: ["intent_id"]
+            isOneToOne: false
+            referencedRelation: "trading_intents"
+            referencedColumns: ["intent_id"]
+          },
+        ]
+      }
       financial_aggregates: {
         Row: {
           avg_daily_surplus: number | null
@@ -1476,6 +1526,81 @@ export type Database = {
           status?: string | null
           tenant_id?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      trading_intents: {
+        Row: {
+          amount_qc: number
+          avg_price: number | null
+          cancelled_at: string | null
+          capture_bps: number | null
+          chain: string
+          created_at: string
+          filled_at: string | null
+          id: string
+          intent_id: string
+          limit_price: number | null
+          max_slippage_bps: number
+          metadata: Json | null
+          min_edge_bps: number
+          order_type: string
+          qty_filled: number | null
+          side: string
+          status: string
+          stop_loss: number | null
+          take_profit: number | null
+          time_in_force: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_qc: number
+          avg_price?: number | null
+          cancelled_at?: string | null
+          capture_bps?: number | null
+          chain: string
+          created_at?: string
+          filled_at?: string | null
+          id?: string
+          intent_id?: string
+          limit_price?: number | null
+          max_slippage_bps: number
+          metadata?: Json | null
+          min_edge_bps: number
+          order_type?: string
+          qty_filled?: number | null
+          side: string
+          status?: string
+          stop_loss?: number | null
+          take_profit?: number | null
+          time_in_force?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_qc?: number
+          avg_price?: number | null
+          cancelled_at?: string | null
+          capture_bps?: number | null
+          chain?: string
+          created_at?: string
+          filled_at?: string | null
+          id?: string
+          intent_id?: string
+          limit_price?: number | null
+          max_slippage_bps?: number
+          metadata?: Json | null
+          min_edge_bps?: number
+          order_type?: string
+          qty_filled?: number | null
+          side?: string
+          status?: string
+          stop_loss?: number | null
+          take_profit?: number | null
+          time_in_force?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
