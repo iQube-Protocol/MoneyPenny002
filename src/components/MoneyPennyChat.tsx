@@ -137,18 +137,22 @@ export const MoneyPennyChat = () => {
 
       // Store conversation as memory
       if (assistantContent) {
-        await moneyPenny.memories.append('trade', `User: ${userMessage}\nMoneyPenny: ${assistantContent}`, {
-          source: 'chat',
-          timestamp: new Date().toISOString(),
+        await moneyPenny.memories.append({
+          type: 'trade',
+          content: `User: ${userMessage}\nMoneyPenny: ${assistantContent}`,
+          metadata: {
+            source: 'chat',
+            timestamp: new Date().toISOString(),
+          }
         });
         
         // Check if response contains insights or decisions
         if (assistantContent.toLowerCase().includes('insight') || 
             assistantContent.toLowerCase().includes('recommend')) {
-          await moneyPenny.memories.appendInsight(
-            assistantContent,
-            'chat',
-          );
+          await moneyPenny.memories.appendInsight({
+            content: assistantContent,
+            source: 'chat'
+          });
         }
       }
     } catch (error) {

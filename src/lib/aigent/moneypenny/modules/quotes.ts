@@ -59,10 +59,11 @@ export class QuotesModule {
         
         // Cache in Redis if available
         if (this.client.redis) {
+          const scopeStr = typeof scope === 'string' ? scope : 'demo';
           if (data.status === 'QUOTE') {
-            this.client.redis.cacheQuote(scope || 'demo', data).catch(console.error);
+            this.client.redis.cacheQuote(scopeStr, data).catch(console.error);
           } else if (data.status === 'FILL') {
-            this.client.redis.cacheFill(scope || 'demo', data).catch(console.error);
+            this.client.redis.cacheFill(scopeStr, data).catch(console.error);
           }
         }
       },

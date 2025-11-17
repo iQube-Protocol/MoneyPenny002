@@ -26,71 +26,16 @@ export const ExecutionFeed = ({ maxItems = 20, showSound = true }: ExecutionFeed
   const [executions, setExecutions] = useState<ExecutionFeedItem[]>([]);
 
   useEffect(() => {
-    // Load initial executions from database
+    // Stub: trading_executions table doesn't exist yet
     const loadInitialExecutions = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('trading_executions')
-          .select('*')
-          .order('timestamp', { ascending: false })
-          .limit(maxItems);
-
-        if (error) throw error;
-
-        if (data) {
-          const items: ExecutionFeedItem[] = data.map((exec) => ({
-            id: exec.execution_id,
-            executionId: exec.execution_id,
-            chain: exec.chain,
-            side: exec.side as 'BUY' | 'SELL',
-            asset: 'QC', // Default asset
-            qtyFilled: exec.qty_filled,
-            avgPrice: exec.avg_price,
-            captureBps: exec.capture_bps,
-            timestamp: new Date(exec.timestamp),
-          }));
-          setExecutions(items);
-        }
-      } catch (error) {
-        console.error('Failed to load initial executions:', error);
-      }
+      setExecutions([]);
     };
 
     loadInitialExecutions();
 
-    // Subscribe to real-time database changes on trading_executions table
+    // Subscribe to real-time notifications (stub for now)
     const dbChannel = supabase
       .channel('execution-feed-db')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'trading_executions',
-        },
-        (payload) => {
-          console.log('ExecutionFeed: New execution from database:', payload);
-          
-          const exec = payload.new as any;
-          const newExecution: ExecutionFeedItem = {
-            id: exec.execution_id,
-            executionId: exec.execution_id,
-            chain: exec.chain,
-            side: exec.side as 'BUY' | 'SELL',
-            asset: 'QC',
-            qtyFilled: exec.qty_filled,
-            avgPrice: exec.avg_price,
-            captureBps: exec.capture_bps,
-            timestamp: new Date(exec.timestamp),
-          };
-          
-          setExecutions(prev => [newExecution, ...prev].slice(0, maxItems));
-          
-          if (showSound) {
-            playExecutionSound(exec.side === 'BUY');
-          }
-        }
-      )
       .subscribe();
 
     // Also subscribe to broadcast notifications from execution engine
