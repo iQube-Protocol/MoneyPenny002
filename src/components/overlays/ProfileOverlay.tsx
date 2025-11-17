@@ -30,11 +30,30 @@ export function ProfileOverlay() {
   const moneyPenny = useMoneyPenny();
   const overlayManager = useOverlayManager();
 
-  // Stub: bank_statements table doesn't exist yet
   const { data: bankStatements, refetch: refetchStatements } = useQuery({
     queryKey: ['bank-statements'],
     queryFn: async () => {
-      return [];
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      const { data, error } = await supabase
+        .from('bank_statements')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching bank statements:', error);
+        return [];
+      }
+
+      return data?.map(doc => ({
+        id: doc.id,
+        name: doc.file_name,
+        month: doc.period_start || 'Unknown',
+        size: '0 KB', // We don't store size anymore
+        uploaded: new Date(doc.created_at).toLocaleDateString()
+      })) || [];
     }
   });
 
@@ -45,23 +64,56 @@ export function ProfileOverlay() {
     }
   }, [bankStatements]);
 
-  // Stub: aggregates
   const { data: aggregatesData, refetch: refetchAggregates, isLoading: aggregatesLoading } = useQuery({
     queryKey: ['banking-aggregates'],
-    queryFn: async () => null,
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('financial_aggregates')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching aggregates:', error);
+        return null;
+      }
+
+      return data;
+    },
     refetchOnWindowFocus: false,
   });
 
   const { data: recommendationsData, refetch: refetchRecommendations, isLoading: recommendationsLoading } = useQuery({
     queryKey: ['banking-recommendations'],
-    queryFn: async () => null,
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('trading_recommendations')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching recommendations:', error);
+        return null;
+      }
+
+      return data;
+    },
     refetchOnWindowFocus: false,
   });
 
   const aggregates = {
-    avgSurplus: aggregatesData?.surplus_mean_daily || 0,
-    surplusVol: aggregatesData?.surplus_vol_daily || 0,
-    lastBalance: aggregatesData?.closing_balance_last || 0,
+    avgSurplus: aggregatesData?.avg_daily_surplus || 0,
+    surplusVol: aggregatesData?.surplus_volatility || 0,
+    lastBalance: aggregatesData?.closing_balance || 0,
+    cashBufferDays: aggregatesData?.cash_buffer_days || 0,
+    confidenceScore: aggregatesData?.confidence_score || 0,
   };
 
   const suggestedPolicy = recommendationsData || {
