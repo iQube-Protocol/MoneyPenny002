@@ -77,9 +77,9 @@ export class ExecutionModule {
 
     const userId = typeof scope === 'string' ? scope : scope.userId;
     const statusParam = status ? `&status=${status}` : '';
-    const { data, error } = await supabase.functions.invoke('execution-engine', {
-      body: { path: `/intent?scope=${userId}${statusParam}`, method: 'GET' }
-    });
+      const { data, error } = await supabase.functions.invoke('execution-engine', {
+        body: { path: '/intent', method: 'GET' }
+      });
 
     if (error) throw error;
     return data || [];
@@ -112,7 +112,7 @@ export class ExecutionModule {
 
     const userId = typeof scope === 'string' ? scope : scope.userId;
     const { data, error } = await supabase.functions.invoke('execution-engine', {
-      body: { path: `/execution?scope=${userId}&limit=${limit}`, method: 'GET' }
+      body: { path: '/execution', method: 'GET' }
     });
 
     if (error) throw error;
@@ -141,7 +141,7 @@ export class ExecutionModule {
 
     const userId = typeof scope === 'string' ? scope : scope.userId;
     const { data, error } = await supabase.functions.invoke('execution-engine', {
-      body: { path: `/stats?scope=${userId}&period=${period}`, method: 'GET' }
+      body: { path: '/stats', method: 'GET' }
     });
 
     if (error) throw error;
