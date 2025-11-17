@@ -9,6 +9,7 @@ import Console from "./pages/Console";
 import Profile from "./pages/Profile";
 import MetaVatar from "./pages/MetaVatar";
 import NotFound from "./pages/NotFound";
+import { Auth } from "./components/Auth";
 import { initMoneyPenny } from "./lib/aigent/moneypenny/client";
 import { AgentiQConfig } from "./lib/aigent/core/types";
 
@@ -53,6 +54,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/console" element={<Console />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/metavatar" element={<MetaVatar />} />
