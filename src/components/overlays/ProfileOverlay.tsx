@@ -30,29 +30,11 @@ export function ProfileOverlay() {
   const moneyPenny = useMoneyPenny();
   const overlayManager = useOverlayManager();
 
-  // Fetch bank statements from database
+  // Stub: bank_statements table doesn't exist yet
   const { data: bankStatements, refetch: refetchStatements } = useQuery({
     queryKey: ['bank-statements'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
-
-      const { data, error } = await supabase
-        .from('bank_statements')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Map to BankingDocument format
-      return (data || []).map(stmt => ({
-        id: stmt.id,
-        name: stmt.file_name,
-        month: stmt.period_start ? new Date(stmt.period_start).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown',
-        size: '0 KB',
-        uploaded: stmt.created_at ? new Date(stmt.created_at).toLocaleDateString() : 'Unknown'
-      }));
+      return [];
     }
   });
 
@@ -63,30 +45,16 @@ export function ProfileOverlay() {
     }
   }, [bankStatements]);
 
-  // Fetch real aggregates and recommendations from backend
+  // Stub: aggregates
   const { data: aggregatesData, refetch: refetchAggregates, isLoading: aggregatesLoading } = useQuery({
     queryKey: ['banking-aggregates'],
-    queryFn: async () => {
-      try {
-        return await moneyPenny.aggregates.getAggregates();
-      } catch (error) {
-        console.error("Failed to fetch aggregates:", error);
-        return null;
-      }
-    },
+    queryFn: async () => null,
     refetchOnWindowFocus: false,
   });
 
   const { data: recommendationsData, refetch: refetchRecommendations, isLoading: recommendationsLoading } = useQuery({
     queryKey: ['banking-recommendations'],
-    queryFn: async () => {
-      try {
-        return await moneyPenny.aggregates.getRecommendations();
-      } catch (error) {
-        console.error("Failed to fetch recommendations:", error);
-        return null;
-      }
-    },
+    queryFn: async () => null,
     refetchOnWindowFocus: false,
   });
 
@@ -251,13 +219,13 @@ export function ProfileOverlay() {
       // Find the statement to get file path
       const statement = bankStatements?.find(s => s.id === id);
       
-      // Delete from database
-      const { error: dbError } = await supabase
-        .from('bank_statements')
-        .delete()
-        .eq('id', id);
+      // Stub: bank_statements table doesn't exist
+      // const { error: dbError } = await supabase
+      //   .from('bank_statements')
+      //   .delete()
+      //   .eq('id', id);
 
-      if (dbError) throw dbError;
+      // if (dbError) throw dbError;
 
       // Delete from storage if we have the file path
       if (statement) {
@@ -307,12 +275,12 @@ export function ProfileOverlay() {
           .remove(filePaths);
       }
 
-      // Delete all records from database tables
-      await Promise.all([
-        supabase.from('bank_statements').delete().eq('user_id', user.id),
-        supabase.from('financial_aggregates').delete().eq('user_id', user.id),
-        supabase.from('trading_recommendations').delete().eq('user_id', user.id)
-      ]);
+      // Stub: Tables don't exist yet
+      // await Promise.all([
+      //   supabase.from('bank_statements').delete().eq('user_id', user.id),
+      //   supabase.from('financial_aggregates').delete().eq('user_id', user.id),
+      //   supabase.from('trading_recommendations').delete().eq('user_id', user.id)
+      // ]);
 
       // Clear local state
       setDocuments([]);

@@ -35,7 +35,7 @@ export default function Console() {
             </div>
             <div className="flex items-center gap-3">
               <NotificationCenter />
-              <ToggleGroup type="single" value={activeTab} onValueChange={(value) => value && setActiveTab(value)} size="xs">
+              <ToggleGroup type="single" value={activeTab} onValueChange={(value) => value && setActiveTab(value)} size="sm">
                 <ToggleGroupItem value="chat" aria-label="Chat">
                   Chat
                 </ToggleGroupItem>

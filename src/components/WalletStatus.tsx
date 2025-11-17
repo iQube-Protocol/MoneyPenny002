@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { Wallet, CheckCircle2 } from 'lucide-react';
 
 export function WalletStatus() {
-  const { isConnected, address, walletKind } = useWallet();
+  const { wallet, isConnected, address, walletKind } = useWallet();
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;

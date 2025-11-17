@@ -16,39 +16,10 @@ export const AgentMemoryPanel = () => {
   }, []);
 
   const loadMemories = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const [recentRes, insightsRes, decisionsRes] = await Promise.all([
-        supabase
-          .from('agent_memories')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(20),
-        supabase
-          .from('agent_memories')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('type', 'insight')
-          .order('created_at', { ascending: false })
-          .limit(10),
-        supabase
-          .from('agent_memories')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('type', 'decision')
-          .order('created_at', { ascending: false })
-          .limit(10),
-      ]);
-
-      setMemories(recentRes.data || []);
-      setInsights(insightsRes.data || []);
-      setDecisions(decisionsRes.data || []);
-    } catch (error) {
-      console.error('Failed to load memories:', error);
-    }
+    // Stub: agent_memories table doesn't exist yet
+    setMemories([]);
+    setInsights([]);
+    setDecisions([]);
   };
 
   return (

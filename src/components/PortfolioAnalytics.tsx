@@ -92,7 +92,8 @@ export function PortfolioAnalytics() {
       
       // Load wallet balances
       try {
-        const walletAdapter = moneyPenny.getWalletAdapter();
+        // Wallet adapter stub
+        const walletAdapter = null;
         if (walletAdapter) {
           const balances = await walletAdapter.getBalances();
           const assetData: AssetBalance[] = balances.map(b => ({
