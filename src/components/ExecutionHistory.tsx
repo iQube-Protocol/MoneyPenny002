@@ -114,7 +114,6 @@ export function ExecutionHistory() {
       case 'quoted': return 'bg-primary/20 text-primary border-primary/40';
       case 'executing': return 'bg-primary/20 text-primary border-primary/40';
       case 'filled': return 'bg-success/20 text-success border-success/40';
-      case 'confirmed': return 'bg-success/20 text-success border-success/40';
       case 'cancelled': return 'bg-muted/20 text-muted-foreground border-muted/40';
       case 'failed': return 'bg-destructive/20 text-destructive border-destructive/40';
       default: return 'bg-muted/20 text-muted-foreground border-muted/40';
