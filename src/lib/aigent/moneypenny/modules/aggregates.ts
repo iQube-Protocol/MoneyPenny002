@@ -16,7 +16,7 @@ export class AggregatesModule {
       .from('financial_aggregates')
       .select('*')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching aggregates:', error);
@@ -34,7 +34,7 @@ export class AggregatesModule {
       .from('trading_recommendations')
       .select('*')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching recommendations:', error);
