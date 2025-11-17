@@ -49,7 +49,7 @@ export default function Index() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
             <Link to="/console">
-              <Button size="lg" className="gap-2 text-lg px-8">
+              <Button size="lg" variant="default" className="gap-2 text-lg px-8">
                 <TrendingUp className="h-5 w-5" />
                 Open Console
               </Button>
