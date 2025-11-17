@@ -379,7 +379,7 @@ export function LiveMarketFeed() {
             {/* Real Executions First (LIVE) */}
             {realExecutions.map((exec, idx) => (
               <div 
-                key={`live-${exec.execution_id}-${idx}`}
+                key={`live-${exec.id}-${idx}`}
                 className="flex items-center gap-2 px-3 py-2 rounded bg-primary/10 hover:bg-primary/20 transition-colors border-l-2 border-primary"
               >
                 <Badge className="bg-primary text-primary-foreground text-xs">

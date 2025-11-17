@@ -180,9 +180,9 @@ serve(async (req) => {
       const executionId = path.split("/")[2];
 
       const { data, error } = await supabaseClient
-        .from("trading_executions")
+        .from("executions")
         .select()
-        .eq("execution_id", executionId)
+        .eq("id", executionId)
         .eq("user_id", user.id)
         .single();
 
@@ -204,7 +204,7 @@ serve(async (req) => {
       const limit = parseInt(url.searchParams.get("limit") || "50");
 
       const { data, error } = await supabaseClient
-        .from("trading_executions")
+        .from("executions")
         .select()
         .eq("user_id", user.id)
         .order("timestamp", { ascending: false })
@@ -231,7 +231,7 @@ serve(async (req) => {
       const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
       const { data: executions, error } = await supabaseClient
-        .from("trading_executions")
+        .from("executions")
         .select()
         .eq("user_id", user.id)
         .gte("timestamp", cutoff);
@@ -311,7 +311,7 @@ async function simulateExecution(supabaseClient: any, intent: any) {
     // Create execution record
     await new Promise((resolve) => setTimeout(resolve, 1500));
     const { data: execution } = await supabaseClient
-      .from("trading_executions")
+      .from("executions")
       .insert({
         intent_id: intent.intent_id,
         user_id: intent.user_id,
@@ -320,10 +320,11 @@ async function simulateExecution(supabaseClient: any, intent: any) {
         qty_filled: intent.amount_qc,
         avg_price: executionPrice,
         capture_bps: captureBps,
-        tx_hash: `0x${Math.random().toString(16).substring(2, 66)}`,
-        gas_used: Math.floor(Math.random() * 100000 + 50000),
-        dex: dex,
-        status: "confirmed",
+        execution_venue: dex,
+        metadata: {
+          tx_hash: `0x${Math.random().toString(16).substring(2, 66)}`,
+          gas_used: Math.floor(Math.random() * 100000 + 50000),
+        },
       })
       .select()
       .single();
@@ -338,7 +339,7 @@ async function simulateExecution(supabaseClient: any, intent: any) {
     await createExecutionMemories(supabaseClient, intent, execution);
 
     // Broadcast execution fill to all connected clients
-    await supabaseClient.channel('notifications').send({
+    await supabaseClient.channel('intent-capture-fills').send({
       type: 'broadcast',
       event: 'notification',
       payload: {
@@ -346,13 +347,13 @@ async function simulateExecution(supabaseClient: any, intent: any) {
         action: 'updated',
         data: {
           intent_id: intent.intent_id,
-          execution_id: execution.execution_id,
+          execution_id: execution.id,
           qty_filled: execution.qty_filled,
           asset: 'QC',
           chain: execution.chain,
           avg_price: execution.avg_price,
           capture_bps: execution.capture_bps,
-          tx_hash: execution.tx_hash,
+          tx_hash: execution.metadata?.tx_hash,
         },
         timestamp: new Date().toISOString(),
       },

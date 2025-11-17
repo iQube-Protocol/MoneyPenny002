@@ -108,7 +108,7 @@ export function ExecutionHistory() {
     return true;
   });
 
-  const getStatusColor = (status: Intent['status'] | Execution['status']) => {
+  const getStatusColor = (status: Intent['status']) => {
     switch (status) {
       case 'pending': return 'bg-warning/20 text-warning border-warning/40';
       case 'quoted': return 'bg-primary/20 text-primary border-primary/40';
@@ -292,7 +292,7 @@ export function ExecutionHistory() {
             <div className="space-y-2 max-h-[500px] overflow-y-auto">
               {filteredExecutions.map((execution) => (
                 <div
-                  key={execution.execution_id}
+                  key={execution.id}
                   className="glass-card p-4 glass-hover space-y-3"
                 >
                   <div className="flex items-start justify-between">
@@ -307,8 +307,8 @@ export function ExecutionHistory() {
                         <span className="font-medium">{execution.side}</span>
                       </div>
                     </div>
-                    <Badge className={getStatusColor(execution.status)}>
-                      {execution.status}
+                    <Badge variant="outline" className="bg-success/20 text-success">
+                      Filled
                     </Badge>
                   </div>
 
@@ -328,20 +328,20 @@ export function ExecutionHistory() {
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs text-muted-foreground">Gas Used</div>
-                      <div className="font-mono text-xs">{execution.gas_used?.toLocaleString() || 'N/A'}</div>
+                      <div className="text-xs text-muted-foreground">Venue</div>
+                      <div className="font-mono text-xs">{execution.execution_venue || 'N/A'}</div>
                     </div>
                   </div>
 
-                  {execution.tx_hash && (
+                  {execution.metadata?.tx_hash && (
                     <div className="flex items-center gap-2 pt-2 border-t border-border">
                       <code className="text-xs text-muted-foreground font-mono flex-1 truncate">
-                        {execution.tx_hash}
+                        {execution.metadata.tx_hash}
                       </code>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => window.open(`https://etherscan.io/tx/${execution.tx_hash}`, '_blank')}
+                        onClick={() => window.open(`https://etherscan.io/tx/${execution.metadata.tx_hash}`, '_blank')}
                         className="shrink-0"
                       >
                         <ExternalLink className="h-3 w-3" />
@@ -350,7 +350,7 @@ export function ExecutionHistory() {
                   )}
 
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>ID: {execution.execution_id}</span>
+                    <span>ID: {execution.id}</span>
                     <span>{new Date(execution.timestamp).toLocaleString()}</span>
                   </div>
                 </div>

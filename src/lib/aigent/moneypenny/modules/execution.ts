@@ -19,16 +19,15 @@ export interface Intent {
 }
 
 export interface Execution {
-  execution_id: string;
+  id: string;
   intent_id: string;
   chain: string;
   side: 'BUY' | 'SELL';
   qty_filled: number;
   avg_price: number;
   capture_bps: number;
-  tx_hash?: string;
-  gas_used?: number;
-  status: 'pending' | 'confirmed' | 'failed';
+  execution_venue?: string;
+  metadata?: any;
   timestamp: string;
 }
 

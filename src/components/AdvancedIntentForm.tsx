@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useOverlayManager } from "@/hooks/use-overlay-manager";
 import { TrendingUp, TrendingDown, Loader2, Settings2, Zap } from "lucide-react";
 import { Intent } from "@/lib/aigent/moneypenny/modules/execution";
+import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
 const advancedIntentSchema = z.object({
@@ -159,6 +160,18 @@ export function AdvancedIntentForm({ availableChains, suggestedStrategy }: Advan
     setIsSubmitting(true);
 
     try {
+      // Check authentication first
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to submit an intent",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       // Note: The backend submitIntent may need to be enhanced to support these advanced features
       // For now, we'll submit with the basic parameters and log the advanced ones
       console.log('Advanced intent parameters:', {

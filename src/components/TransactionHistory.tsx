@@ -125,12 +125,12 @@ export function TransactionHistory() {
         const executions = await moneyPenny.execution.listExecutions(100);
         executions.forEach(exec => {
           allTransactions.push({
-            id: exec.execution_id,
+            id: exec.id,
             type: "execution",
             description: `${exec.side} trade on ${exec.chain}`,
             amount: exec.qty_filled,
             asset: exec.chain,
-            status: exec.status === "confirmed" ? "completed" : exec.status as TransactionStatus,
+            status: "completed",
             timestamp: exec.timestamp,
             details: exec
           });
