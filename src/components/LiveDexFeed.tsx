@@ -98,7 +98,7 @@ export function LiveDexFeed() {
                     <span className="text-sm font-medium text-foreground">{pair?.label || 'Unknown'}</span>
                   </div>
                   <span className="text-sm font-bold text-foreground">
-                    ${data.price_usd.toFixed(4)}
+                    ${data.price_usd?.toFixed(4) ?? 'N/A'}
                   </span>
                 </div>
                 

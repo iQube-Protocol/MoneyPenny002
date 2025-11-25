@@ -5,14 +5,14 @@ const corsHeaders = {
 
 interface DexOracleResponse {
   chain: string;
-  address: string;
+  pair_address: string;
   label: string;
-  price_usd: number | null;
-  liquidity_usd: number | null;
-  volume_24h_usd: number | null;
-  fees_bps: number | null;
+  price_usd: number;
+  liquidity_usd: number;
+  volume_24h_usd: number;
+  fee_bps: number;
   source: string;
-  timestamp: string;
+  ts: string;
 }
 
 Deno.serve(async (req: Request): Promise<Response> => {
@@ -39,14 +39,14 @@ Deno.serve(async (req: Request): Promise<Response> => {
     // You can later wire this up to a real DEX analytics API.
     const body: DexOracleResponse = {
       chain,
-      address,
+      pair_address: address,
       label: `${chain.toUpperCase()} pool ${address.slice(0, 6)}…${address.slice(-4)}`,
-      price_usd: null,
+      price_usd: 3456.78,
       liquidity_usd: 5_000_000,
       volume_24h_usd: 250_000,
-      fees_bps: 30,
+      fee_bps: 30,
       source: "synthetic-demo",
-      timestamp: new Date().toISOString(),
+      ts: new Date().toISOString(),
     };
 
     return new Response(JSON.stringify(body), {
