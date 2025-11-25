@@ -139,72 +139,98 @@ export function ResearchPanel({ onStrategyUpdate }: ResearchPanelProps) {
             )}
             
             {/* iQube Scoring */}
-            <div className="flex flex-wrap gap-2 items-center">
-              <Badge className={getTierColor(memo.iq_tier)}>
-                {memo.iq_tier.toUpperCase()} Tier
-              </Badge>
-              <div className="flex items-center gap-1">
-                <AlertTriangle className="h-4 w-4" />
-                <span className="text-sm">Risk:</span>
-                <span className={`text-sm font-medium ${getRiskLevel(memo.iq_risk_score).color}`}>
-                  {getRiskLevel(memo.iq_risk_score).label} ({memo.iq_risk_score})
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Shield className="h-4 w-4" />
-                <span className="text-sm">Trust:</span>
-                <span className={`text-sm font-medium ${getTrustLevel(memo.iq_trust_score).color}`}>
-                  {getTrustLevel(memo.iq_trust_score).label} ({memo.iq_trust_score})
-                </span>
-              </div>
-            </div>
+            {(() => {
+              const tier = (memo.iq_tier || memo.tier || 'persona') as string;
+              const riskScore: number =
+                typeof memo.iq_risk_score === 'number'
+                  ? memo.iq_risk_score
+                  : typeof memo.riskScore === 'number'
+                    ? memo.riskScore
+                    : 0;
+              const trustScore: number =
+                typeof memo.iq_trust_score === 'number'
+                  ? memo.iq_trust_score
+                  : typeof memo.trustScore === 'number'
+                    ? memo.trustScore
+                    : 0;
+
+              return (
+                <div className="flex flex-wrap gap-2 items-center">
+                  <Badge className={getTierColor(tier)}>
+                    {tier.toUpperCase()} Tier
+                  </Badge>
+                  <div className="flex items-center gap-1">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span className="text-sm">Risk:</span>
+                    <span className={`text-sm font-medium ${getRiskLevel(riskScore).color}`}>
+                      {getRiskLevel(riskScore).label} ({riskScore})
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Shield className="h-4 w-4" />
+                    <span className="text-sm">Trust:</span>
+                    <span className={`text-sm font-medium ${getTrustLevel(trustScore).color}`}>
+                      {getTrustLevel(trustScore).label} ({trustScore})
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Summary */}
-            <div>
-              <h3 className="text-sm font-medium mb-2">Summary</h3>
-              <p className="text-sm text-muted-foreground">{memo.summary}</p>
-            </div>
+            {memo.summary && (
+              <div>
+                <h3 className="text-sm font-medium mb-2">Summary</h3>
+                <p className="text-sm text-muted-foreground">{memo.summary}</p>
+              </div>
+            )}
 
             {/* Key Points */}
-            <div>
-              <h3 className="text-sm font-medium mb-2">Key Insights</h3>
-              <ul className="space-y-1">
-                {memo.bullets.map((bullet, i) => (
-                  <li key={i} className="text-sm text-muted-foreground">{bullet}</li>
-                ))}
-              </ul>
-            </div>
+            {Array.isArray(memo.bullets || memo.keyInsights) && (
+              <div>
+                <h3 className="text-sm font-medium mb-2">Key Insights</h3>
+                <ul className="space-y-1">
+                  {(memo.bullets || memo.keyInsights).map((bullet: string, i: number) => (
+                    <li key={i} className="text-sm text-muted-foreground">{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Citations */}
-            <div>
-              <h3 className="text-sm font-medium mb-2">Sources ({memo.citations.length})</h3>
-              <div className="space-y-2">
-                {memo.citations.map((citation, i) => (
-                  <a
-                    key={i}
-                    href={citation.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start gap-2 p-2 rounded hover:bg-muted/50 transition-colors"
-                  >
-                    <ExternalLink className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{citation.title}</p>
-                      {citation.snippet && (
-                        <p className="text-xs text-muted-foreground line-clamp-2">{citation.snippet}</p>
-                      )}
-                    </div>
-                  </a>
-                ))}
+            {Array.isArray(memo.citations || memo.sources) && (
+              <div>
+                <h3 className="text-sm font-medium mb-2">Sources {(memo.citations || memo.sources).length ? `(${(memo.citations || memo.sources).length})` : ''}</h3>
+                <div className="space-y-2">
+                  {(memo.citations || memo.sources).map((citation: any, i: number) => (
+                    <a
+                      key={i}
+                      href={citation.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-2 p-2 rounded hover:bg-muted/50 transition-colors"
+                    >
+                      <ExternalLink className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{citation.title}</p>
+                        {citation.snippet && (
+                          <p className="text-xs text-muted-foreground line-clamp-2">{citation.snippet}</p>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-1">
-              {memo.tags?.map((tag, i) => (
-                <Badge key={i} variant="outline" className="text-xs">{tag}</Badge>
-              ))}
-            </div>
+            {Array.isArray(memo.tags) && memo.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {memo.tags.map((tag: string, i: number) => (
+                  <Badge key={i} variant="outline" className="text-xs">{tag}</Badge>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </CardContent>
