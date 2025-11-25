@@ -13,6 +13,7 @@ import { Auth } from "./components/Auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { initMoneyPenny } from "./lib/aigent/moneypenny/client";
 import { AgentiQConfig } from "./lib/aigent/core/types";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -53,15 +54,17 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/console" element={<ProtectedRoute><Console /></ProtectedRoute>} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/metavatar" element={<MetaVatar />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/console" element={<ProtectedRoute><Console /></ProtectedRoute>} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/metavatar" element={<MetaVatar />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ErrorBoundary>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
